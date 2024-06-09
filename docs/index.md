@@ -1,17 +1,14 @@
-# Welcome to MkDocs
+# 力扣LeetCode
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+工作与实习面试
 
-## Commands
+## 大纲
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+- LeetCode50
+- LeetCode75
+- LeetCode100
+- LeetCode150
 
-## Project layout
+## 方法
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+力扣题目，直接看题解，不需要自己做，因为刷力扣是为了找到工作而已。
