@@ -375,5 +375,136 @@ public:
 - 时间复杂度：入栈操作O(n)，其余操作都是O(1)。
 - 空间复杂度：O(n)。
 
+### [232. 用栈实现队列](https://leetcode.cn/problems/implement-queue-using-stacks/)
+
+简单
+
+请你仅使用两个栈实现先入先出队列。队列应当支持一般队列支持的所有操作（`push`、`pop`、`peek`、`empty`）：
+
+实现 `MyQueue` 类：
+
+- `void push(int x)` 将元素 x 推到队列的末尾
+- `int pop()` 从队列的开头移除并返回元素
+- `int peek()` 返回队列开头的元素
+- `boolean empty()` 如果队列为空，返回 `true` ；否则，返回 `false`
+
+#### 方法一：双栈
+
+```c++
+class MyQueue {
+private:
+    stack<int> inStack, outStack;
+
+    void in2out() {
+        while (!inStack.empty()) {
+            outStack.push(inStack.top());
+            inStack.pop();
+        }
+    }
+
+public:
+    MyQueue() {}
+
+    void push(int x) {
+        inStack.push(x);
+    }
+
+    int pop() {
+        if (outStack.empty()) {
+            in2out();
+        }
+        int x = outStack.top();
+        outStack.pop();
+        return x;
+    }
+
+    int peek() {
+        if (outStack.empty()) {
+            in2out();
+        }
+        return outStack.top();
+    }
+
+    bool empty() {
+        return inStack.empty() && outStack.empty();
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/implement-queue-using-stacks/solutions/632369/yong-zhan-shi-xian-dui-lie-by-leetcode-s-xnb6/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：push 和 empty 为 O(1)，pop 和 peek 为均摊 O(1)。
+- 空间复杂度：O(n)。
+
+### [746. 使用最小花费爬楼梯](https://leetcode.cn/problems/min-cost-climbing-stairs/)
+
+简单
+
+给你一个整数数组 `cost` ，其中 `cost[i]` 是从楼梯第 `i` 个台阶向上爬需要支付的费用。一旦你支付此费用，即可选择向上爬一个或者两个台阶。
+
+你可以选择从下标为 `0` 或下标为 `1` 的台阶开始爬楼梯。
+
+请你计算并返回达到楼梯顶部的最低花费。
+
+#### 方法一：动态规划
+
+```c++
+class Solution {
+public:
+    int minCostClimbingStairs(vector<int>& cost) {
+        int n = cost.size();
+        vector<int> dp(n + 1);
+        dp[0] = dp[1] = 0;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2]);
+        }
+        return dp[n];
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/min-cost-climbing-stairs/solutions/528955/shi-yong-zui-xiao-hua-fei-pa-lou-ti-by-l-ncf8/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(n)。
+- 空间复杂度：O(n)。
+
+使用滚动数组的思想，优化空间复杂度。
+
+```c++
+class Solution {
+public:
+    int minCostClimbingStairs(vector<int>& cost) {
+        int n = cost.size();
+        int prev = 0, curr = 0;
+        for (int i = 2; i <= n; i++) {
+            int next = min(curr + cost[i - 1], prev + cost[i - 2]);
+            prev = curr;
+            curr = next;
+        }
+        return curr;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/min-cost-climbing-stairs/solutions/528955/shi-yong-zui-xiao-hua-fei-pa-lou-ti-by-l-ncf8/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(n)。
+- 空间复杂度：O(1)。
+
+
+
+
+
+
+
 
 
