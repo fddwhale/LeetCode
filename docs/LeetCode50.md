@@ -2,6 +2,140 @@
 
 ## 字符串相关
 
+### [8. 字符串转换整数 (atoi)](https://leetcode.cn/problems/string-to-integer-atoi/)
+
+中等
+
+请你来实现一个 `myAtoi(string s)` 函数，使其能将字符串转换成一个 32 位有符号整数。
+
+函数 `myAtoi(string s)` 的算法如下：
+
+1. **空格：**读入字符串并丢弃无用的前导空格（`" "`）
+2. **符号：**检查下一个字符（假设还未到字符末尾）为 `'-'` 还是 `'+'`。如果两者都不存在，则假定结果为正。
+3. **转换：**通过跳过前置零来读取该整数，直到遇到非数字字符或到达字符串的结尾。如果没有读取数字，则结果为0。
+4. **舍入：**如果整数数超过 32 位有符号整数范围 `[−231, 231 − 1]` ，需要截断这个整数，使其保持在这个范围内。具体来说，小于 `−231` 的整数应该被舍入为 `−231` ，大于 `231 − 1` 的整数应该被舍入为 `231 − 1` 。
+
+返回整数作为最终结果。
+
+#### 方法一：自动机
+
+```c++
+class Automaton {
+    string state = "start";
+    unordered_map<string, vector<string>> table = {
+        {"start", {"start", "signed", "in_number", "end"}},
+        {"signed", {"end", "end", "in_number", "end"}},
+        {"in_number", {"end", "end", "in_number", "end"}},
+        {"end", {"end", "end", "end", "end"}}
+    };
+
+    int get_col(char c) {
+        if (isspace(c)) return 0;
+        if (c == '+' or c == '-') return 1;
+        if (isdigit(c)) return 2;
+        return 3;
+    }
+public:
+    int sign = 1;
+    long long ans = 0;
+
+    void get(char c) {
+        state = table[state][get_col(c)];
+        if (state == "in_number") {
+            ans = ans * 10 + c - '0';
+            ans = sign == 1 ? min(ans, (long long)INT_MAX) : min(ans, -(long long)INT_MIN);
+        }
+        else if (state == "signed")
+            sign = c == '+' ? 1 : -1;
+    }
+};
+
+class Solution {
+public:
+    int myAtoi(string str) {
+        Automaton automaton;
+        for (char c : str)
+            automaton.get(c);
+        return automaton.sign * automaton.ans;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/string-to-integer-atoi/solutions/183164/zi-fu-chuan-zhuan-huan-zheng-shu-atoi-by-leetcode-/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(n)。
+- 空间复杂度：O(1)。
+
+### [13. 罗马数字转整数](https://leetcode.cn/problems/roman-to-integer/)
+
+简单
+
+罗马数字包含以下七种字符: `I`， `V`， `X`， `L`，`C`，`D` 和 `M`。
+
+```
+字符          数值
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
+```
+
+例如， 罗马数字 `2` 写做 `II` ，即为两个并列的 1 。`12` 写做 `XII` ，即为 `X` + `II` 。 `27` 写做 `XXVII`, 即为 `XX` + `V` + `II` 。
+
+通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 `IIII`，而是 `IV`。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 `IX`。这个特殊的规则只适用于以下六种情况：
+
+- `I` 可以放在 `V` (5) 和 `X` (10) 的左边，来表示 4 和 9。
+- `X` 可以放在 `L` (50) 和 `C` (100) 的左边，来表示 40 和 90。 
+- `C` 可以放在 `D` (500) 和 `M` (1000) 的左边，来表示 400 和 900。
+
+给定一个罗马数字，将其转换成整数。
+
+#### 方法一：模拟
+
+```c++
+class Solution {
+private:
+    unordered_map<char, int> symbolValues = {
+        {'I', 1},
+        {'V', 5},
+        {'X', 10},
+        {'L', 50},
+        {'C', 100},
+        {'D', 500},
+        {'M', 1000},
+    };
+
+public:
+    int romanToInt(string s) {
+        int ans = 0;
+        int n = s.length();
+        for (int i = 0; i < n; ++i) {
+            int value = symbolValues[s[i]];
+            if (i < n - 1 && value < symbolValues[s[i + 1]]) {
+                ans -= value;
+            } else {
+                ans += value;
+            }
+        }
+        return ans;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/roman-to-integer/solutions/774992/luo-ma-shu-zi-zhuan-zheng-shu-by-leetcod-w55p/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(n)。
+- 空间复杂度：O(1)。
+
 ### [125. 验证回文串](https://leetcode.cn/problems/valid-palindrome/)
 
 简单
@@ -499,6 +633,182 @@ public:
 
 - 时间复杂度：O(n)。
 - 空间复杂度：O(1)。
+
+### [844. 比较含退格的字符串](https://leetcode.cn/problems/backspace-string-compare/)
+
+简单
+
+给定 `s` 和 `t` 两个字符串，当它们分别被输入到空白的文本编辑器后，如果两者相等，返回 `true` 。`#` 代表退格字符。
+
+#### 方法一：重构字符串
+
+```c++
+class Solution {
+public:
+    bool backspaceCompare(string S, string T) {
+        return build(S) == build(T);
+    }
+
+    string build(string str) {
+        string ret;
+        for (char ch : str) {
+            if (ch != '#') {
+                ret.push_back(ch);
+            } else if (!ret.empty()) {
+                ret.pop_back();
+            }
+        }
+        return ret;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/backspace-string-compare/solutions/451606/bi-jiao-han-tui-ge-de-zi-fu-chuan-by-leetcode-solu/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(N + M)。
+- 空间复杂度：O(N + M)。
+
+#### 方法二：双指针
+
+```c++
+class Solution {
+public:
+    bool backspaceCompare(string S, string T) {
+        int i = S.length() - 1, j = T.length() - 1;
+        int skipS = 0, skipT = 0;
+
+        while (i >= 0 || j >= 0) {
+            while (i >= 0) {
+                if (S[i] == '#') {
+                    skipS++, i--;
+                } else if (skipS > 0) {
+                    skipS--, i--;
+                } else {
+                    break;
+                }
+            }
+            while (j >= 0) {
+                if (T[j] == '#') {
+                    skipT++, j--;
+                } else if (skipT > 0) {
+                    skipT--, j--;
+                } else {
+                    break;
+                }
+            }
+            if (i >= 0 && j >= 0) {
+                if (S[i] != T[j]) {
+                    return false;
+                }
+            } else {
+                if (i >= 0 || j >= 0) {
+                    return false;
+                }
+            }
+            i--, j--;
+        }
+        return true;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/backspace-string-compare/solutions/451606/bi-jiao-han-tui-ge-de-zi-fu-chuan-by-leetcode-solu/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(N + M)。
+- 空间复杂度：O(1)。
+
+## 其他
+
+### [461. 汉明距离](https://leetcode.cn/problems/hamming-distance/)
+
+简单
+
+两个整数之间的 [汉明距离](https://baike.baidu.com/item/汉明距离) 指的是这两个数字对应二进制位不同的位置的数目。
+
+给你两个整数 `x` 和 `y`，计算并返回它们之间的汉明距离。
+
+#### 方法一：内置位计数功能
+
+```c++
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+        return __builtin_popcount(x ^ y);
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/hamming-distance/solutions/797339/yi-ming-ju-chi-by-leetcode-solution-u1w7/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(1)。
+- 空间复杂度：O(1)。
+
+#### 方法二：移位实现位计数
+
+本方法将使用位运算中移位的操作实现位计数功能。
+
+```c++
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+        int s = x ^ y, ret = 0;
+        while (s) {
+            ret += s & 1;
+            s >>= 1;
+        }
+        return ret;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/hamming-distance/solutions/797339/yi-ming-ju-chi-by-leetcode-solution-u1w7/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(log C)。
+- 空间复杂度：O(1)。
+
+#### 方法三：Brian Kernighan 算法
+
+```c++
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+        int s = x ^ y, ret = 0;
+        while (s) {
+            s &= s - 1;
+            ret++;
+        }
+        return ret;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/hamming-distance/solutions/797339/yi-ming-ju-chi-by-leetcode-solution-u1w7/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(log C)。
+- 空间复杂度：O(1)。
+
+
+
+
+
+
+
+
 
 
 
