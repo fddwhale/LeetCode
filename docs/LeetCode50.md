@@ -69,6 +69,99 @@ public:
 - 时间复杂度：O(n)。
 - 空间复杂度：O(1)。
 
+### [12. 整数转罗马数字](https://leetcode.cn/problems/integer-to-roman/)
+
+中等
+
+七个不同的符号代表罗马数字，其值如下：
+
+| 符号 | 值   |
+| ---- | ---- |
+| I    | 1    |
+| V    | 5    |
+| X    | 10   |
+| L    | 50   |
+| C    | 100  |
+| D    | 500  |
+| M    | 1000 |
+
+罗马数字是通过添加从最高到最低的小数位值的转换而形成的。将小数位值转换为罗马数字有以下规则：
+
+- 如果该值不是以 4 或 9 开头，请选择可以从输入中减去的最大值的符号，将该符号附加到结果，减去其值，然后将其余部分转换为罗马数字。
+- 如果该值以 4 或 9 开头，使用 **减法形式**，表示从以下符号中减去一个符号，例如 4 是 5 (`V`) 减 1 (`I`): `IV` ，9 是 10 (`X`) 减 1 (`I`)：`IX`。仅使用以下减法形式：4 (`IV`)，9 (`IX`)，40 (`XL`)，90 (`XC`)，400 (`CD`) 和 900 (`CM`)。
+- 只有 10 的次方（`I`, `X`, `C`, `M`）最多可以连续附加 3 次以代表 10 的倍数。你不能多次附加 5 (`V`)，50 (`L`) 或 500 (`D`)。如果需要将符号附加4次，请使用 **减法形式**。
+
+给定一个整数，将其转换为罗马数字。
+
+#### 方法一：模拟
+
+```c++
+const pair<int, string> valueSymbols[] = {
+    {1000, "M"},
+    {900,  "CM"},
+    {500,  "D"},
+    {400,  "CD"},
+    {100,  "C"},
+    {90,   "XC"},
+    {50,   "L"},
+    {40,   "XL"},
+    {10,   "X"},
+    {9,    "IX"},
+    {5,    "V"},
+    {4,    "IV"},
+    {1,    "I"},
+};
+
+class Solution {
+public:
+    string intToRoman(int num) {
+        string roman;
+        for (const auto &[value, symbol] : valueSymbols) {
+            while (num >= value) {
+                num -= value;
+                roman += symbol;
+            }
+            if (num == 0) {
+                break;
+            }
+        }
+        return roman;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/integer-to-roman/solutions/774611/zheng-shu-zhuan-luo-ma-shu-zi-by-leetcod-75rs/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(1)。
+- 空间复杂度：O(1)。
+
+#### 方法二：硬编码数字
+
+```c++
+const string thousands[] = {"", "M", "MM", "MMM"};
+const string hundreds[]  = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+const string tens[]      = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+const string ones[]      = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+
+class Solution {
+public:
+    string intToRoman(int num) {
+        return thousands[num / 1000] + hundreds[num % 1000 / 100] + tens[num % 100 / 10] + ones[num % 10];
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/integer-to-roman/solutions/774611/zheng-shu-zhuan-luo-ma-shu-zi-by-leetcod-75rs/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(1)。
+- 空间复杂度：O(1)。
+
 ### [13. 罗马数字转整数](https://leetcode.cn/problems/roman-to-integer/)
 
 简单
@@ -135,6 +228,285 @@ public:
 
 - 时间复杂度：O(n)。
 - 空间复杂度：O(1)。
+
+### [14. 最长公共前缀](https://leetcode.cn/problems/longest-common-prefix/)
+
+简单
+
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 `""`。
+
+#### 方法一：横向扫描
+
+```c++
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if (!strs.size()) {
+            return "";
+        }
+        string prefix = strs[0];
+        int count = strs.size();
+        for (int i = 1; i < count; ++i) {
+            prefix = longestCommonPrefix(prefix, strs[i]);
+            if (!prefix.size()) {
+                break;
+            }
+        }
+        return prefix;
+    }
+
+    string longestCommonPrefix(const string& str1, const string& str2) {
+        int length = min(str1.size(), str2.size());
+        int index = 0;
+        while (index < length && str1[index] == str2[index]) {
+            ++index;
+        }
+        return str1.substr(0, index);
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/longest-common-prefix/solutions/288575/zui-chang-gong-gong-qian-zhui-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(mn)。
+- 空间复杂度：O(1)。
+
+#### 方法二：纵向扫描
+
+```c++
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if (!strs.size()) {
+            return "";
+        }
+        int length = strs[0].size();
+        int count = strs.size();
+        for (int i = 0; i < length; ++i) {
+            char c = strs[0][i];
+            for (int j = 1; j < count; ++j) {
+                if (i == strs[j].size() || strs[j][i] != c) {
+                    return strs[0].substr(0, i);
+                }
+            }
+        }
+        return strs[0];
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/longest-common-prefix/solutions/288575/zui-chang-gong-gong-qian-zhui-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(mn)。
+- 空间复杂度：O(1)。
+
+#### 方法三：分治
+
+```c++
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if (!strs.size()) {
+            return "";
+        }
+        else {
+            return longestCommonPrefix(strs, 0, strs.size() - 1);
+        }
+    }
+
+    string longestCommonPrefix(const vector<string>& strs, int start, int end) {
+        if (start == end) {
+            return strs[start];
+        }
+        else {
+            int mid = (start + end) / 2;
+            string lcpLeft = longestCommonPrefix(strs, start, mid);
+            string lcpRight = longestCommonPrefix(strs, mid + 1, end);
+            return commonPrefix(lcpLeft, lcpRight);
+        }
+    }
+
+    string commonPrefix(const string& lcpLeft, const string& lcpRight) {
+        int minLength = min(lcpLeft.size(), lcpRight.size());
+        for (int i = 0; i < minLength; ++i) {
+            if (lcpLeft[i] != lcpRight[i]) {
+                return lcpLeft.substr(0, i);
+            }
+        }
+        return lcpLeft.substr(0, minLength);
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/longest-common-prefix/solutions/288575/zui-chang-gong-gong-qian-zhui-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(mn)。
+- 空间复杂度：O(m log n)。
+
+#### 方法四：二分查找
+
+```c++
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if (!strs.size()) {
+            return "";
+        }
+        int minLength = min_element(strs.begin(), strs.end(), [](const string& s, const string& t) {return s.size() < t.size();})->size();
+        int low = 0, high = minLength;
+        while (low < high) {
+            int mid = (high - low + 1) / 2 + low;
+            if (isCommonPrefix(strs, mid)) {
+                low = mid;
+            }
+            else {
+                high = mid - 1;
+            }
+        }
+        return strs[0].substr(0, low);
+    }
+
+    bool isCommonPrefix(const vector<string>& strs, int length) {
+        string str0 = strs[0].substr(0, length);
+        int count = strs.size();
+        for (int i = 1; i < count; ++i) {
+            string str = strs[i];
+            for (int j = 0; j < length; ++j) {
+                if (str0[j] != str[j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/longest-common-prefix/solutions/288575/zui-chang-gong-gong-qian-zhui-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(mn log m)。
+- 空间复杂度：O(1)。
+
+### [28. 找出字符串中第一个匹配项的下标](https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/)
+
+简单
+
+给你两个字符串 `haystack` 和 `needle` ，请你在 `haystack` 字符串中找出 `needle` 字符串的第一个匹配项的下标（下标从 0 开始）。如果 `needle` 不是 `haystack` 的一部分，则返回 `-1` 。
+
+#### 方法一：暴力匹配
+
+```c++
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int n = haystack.size(), m = needle.size();
+        for (int i = 0; i + m <= n; i++) {
+            bool flag = true;
+            for (int j = 0; j < m; j++) {
+                if (haystack[i + j] != needle[j]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                return i;
+            }
+        }
+        return -1;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/solutions/732236/shi-xian-strstr-by-leetcode-solution-ds6y/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(nm)。
+- 空间复杂度：O(1)。
+
+#### 方法二：Knuth-Morris-Pratt 算法
+
+```c++
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int n = haystack.size(), m = needle.size();
+        if (m == 0) {
+            return 0;
+        }
+        vector<int> pi(m);
+        for (int i = 1, j = 0; i < m; i++) {
+            while (j > 0 && needle[i] != needle[j]) {
+                j = pi[j - 1];
+            }
+            if (needle[i] == needle[j]) {
+                j++;
+            }
+            pi[i] = j;
+        }
+        for (int i = 0, j = 0; i < n; i++) {
+            while (j > 0 && haystack[i] != needle[j]) {
+                j = pi[j - 1];
+            }
+            if (haystack[i] == needle[j]) {
+                j++;
+            }
+            if (j == m) {
+                return i - m + 1;
+            }
+        }
+        return -1;
+    }
+};
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/solutions/732236/shi-xian-strstr-by-leetcode-solution-ds6y/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+- 时间复杂度：O(n + m)。
+- 空间复杂度：O(m)。
+
+### [38. 外观数列](https://leetcode.cn/problems/count-and-say/)
+
+中等
+
+「外观数列」是一个数位字符串序列，由递归公式定义：
+
+- `countAndSay(1) = "1"`
+- `countAndSay(n)` 是 `countAndSay(n-1)` 的行程长度编码。
+
+[行程长度编码](https://baike.baidu.com/item/行程长度编码/2931940)（RLE）是一种字符串压缩方法，其工作原理是通过将连续相同字符（重复两次或更多次）替换为字符重复次数（运行长度）和字符的串联。例如，要压缩字符串 `"3322251"` ，我们将 `"33"` 用 `"23"` 替换，将 `"222"` 用 `"32"` 替换，将 `"5"` 用 `"15"` 替换并将 `"1"` 用 `"11"` 替换。因此压缩后字符串变为 `"23321511"`。
+
+给定一个整数 `n` ，返回 **外观数列** 的第 `n` 个元素。
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### [125. 验证回文串](https://leetcode.cn/problems/valid-palindrome/)
 
